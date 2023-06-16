@@ -285,12 +285,18 @@ func parseRouteMsg(msg *netlink.Message) (*RouteEntry, bool, error) {
 			e.Priority = int(ad.Uint32())
 		case unix.RTA_PREFSRC:
 			e.PrefSrc = net.IP(ad.Bytes())
-		case unix.RTA_METRICS:
-			e.Metric = int(ad.Uint32())
-		case unix.RTA_TABLE:
-			e.Table = RouteTable(ad.Uint32())
-		case unix.RTA_PREF:
-			e.Pref = RoutePref(ad.Uint8())
+        	case unix.RTA_METRICS:
+            		if ad.Len() == 4 {
+                		e.Metric = int(ad.Uint32())
+            		}
+        	case unix.RTA_TABLE:
+            		if ad.Len() == 4 {
+                		e.Table = RouteTable(ad.Uint32())
+            		}
+        	case unix.RTA_PREF:
+            		if ad.Len() == 1 {
+                		e.Pref = RoutePref(ad.Uint8())
+            		}
 		}
 	}
 	err = ad.Err()
